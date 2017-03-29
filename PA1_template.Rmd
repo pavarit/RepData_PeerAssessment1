@@ -1,5 +1,5 @@
 ---
-title: "Reproducible Research Project: Activity Monitoring"
+title: "Reproducible Research: Peer Assessment 1"
 output: html_document
 ---
 
@@ -18,7 +18,7 @@ The first step is to load data from the working directory and convert the data i
 activity <- read.csv("activity.csv", colClasses = c("numeric", "Date", "numeric"))
 ```
   
-## Mean total steps
+## What is mean total number of steps taken per day?
 Next, the total number of steps for each day is computed. Then, the histogram is plotted to see the frequencies of number of steps.
 
 ```{r totalsteps}
@@ -32,7 +32,7 @@ medianst <- median(sumsteps, na.rm = TRUE)
 
 The mean of total steps per day is `r meanst`. The median is `r medianst`. Note that the missing value is ignored in this case.  
 
-## Plotting Time Series of Average NUmber of Steps
+## What is the average daily activity pattern?
 Mean value is calculated for each interval, then plotted as time series.
 ```{r dailypattern}
 meansteps <- with(activity, tapply(steps, interval, mean, na.rm = TRUE))
@@ -40,7 +40,7 @@ pattern <- data.frame(interval = names(meansteps), steps = meansteps, stringsAsF
 with(pattern, plot(interval, steps, type = "l", ylab = "Number of Steps", main = "Time Series of Avg. Number of Steps"))
 ```
   
-## Imputing Missing Value
+## Imputing missing values
 The missing values are then imputed by using the mean value of that 5-minute interval. The new data is used to do similar analysis above and the results are compared. First of all, the histogram is plotted. The shape of the new histogram changed, since the day with missing values are now imputed with the same one value - the mean of total steps per day, which is 10766.19. This is why there is one bin that has significantly increased value.
 
 ```{r imputena}
@@ -64,7 +64,7 @@ Previously in the activity data, the number of rows in with NAs is `r nanum`.
 
 After imputing data, the mean of total steps per day is `r meanst.im`. The median is `r medianst.im`. The median and mean is now the same.  
 
-## Split Data into Weekday and Weekend
+## Are there differences in activity patterns between weekdays and weekends?
 Lastly, the data is split into weekday and weekend. The time series are then plotted. The weekday plot is similar to the overall plot in the previous section. However, the weekend plot has different shape as numer of steps is higher from around interval 1000 through 2000. This can be due to during weekday, the test subject maybe less active.
 
 ```{r weekdayweekend, fig.height=10}
