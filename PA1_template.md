@@ -1,14 +1,6 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
-options(scipen = 1, digits = 2)
-```
+
   
 This is the final project of Reproducible Research course. An analysis is done on [Activity monitoring data](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip). The objective is to find the pattern of number of steps throughout the day (in 5-minute intervals.)  
 
@@ -16,36 +8,47 @@ The data is first analyzed while ignoring missing values. Then, the next step is
   
 ## Loading and preprocessing the data
 The first step is to load data from the working directory and convert the data into appropreate classes.  
-```{r loaddata}
+
+```r
 activity <- read.csv("activity.csv", colClasses = c("numeric", "Date", "numeric"))
 ```
   
 ## What is mean total number of steps taken per day?
 Next, the total number of steps for each day is computed. Then, the histogram is plotted to see the frequencies of number of steps.
 
-```{r totalsteps}
+
+```r
 options(digits = 2)
 library(ggplot2)
 sumsteps <- with(activity, tapply(steps, date, sum))
 qplot(sumsteps) + labs(x = "Number of Steps", y = "Frequency (Days)", title = "Histogram of Total Number of Steps per Day")
+```
+
+![](PA1_template_files/figure-html/totalsteps-1.png)<!-- -->
+
+```r
 meanst <- mean(sumsteps, na.rm = TRUE)
 medianst <- median(sumsteps, na.rm = TRUE)
 ```
 
-The mean of total steps per day is `r meanst`. The median is `r medianst`. Note that the missing value is ignored in this case.  
+The mean of total steps per day is 10766.19. The median is 10765. Note that the missing value is ignored in this case.  
 
 ## What is the average daily activity pattern?
 Mean value is calculated for each interval, then plotted as time series.
-```{r dailypattern}
+
+```r
 meansteps <- with(activity, tapply(steps, interval, mean, na.rm = TRUE))
 pattern <- data.frame(interval = names(meansteps), steps = meansteps, stringsAsFactors = FALSE)
 with(pattern, plot(interval, steps, type = "l", ylab = "Number of Steps", main = "Time Series of Avg. Number of Steps"))
 ```
+
+![](PA1_template_files/figure-html/dailypattern-1.png)<!-- -->
   
 ## Imputing missing values
 The missing values are then imputed by using the mean value of that 5-minute interval. The new data is used to do similar analysis above and the results are compared. First of all, the histogram is plotted. The shape of the new histogram changed, since the day with missing values are now imputed with the same one value - the mean of total steps per day, which is 10766.19. This is why there is one bin that has significantly increased value.
 
-```{r imputena}
+
+```r
 nanum <- sum(is.na(activity))
 
 ##impute data
@@ -58,18 +61,23 @@ for (i in 1:nrow(activity.im)) {
 
 sumsteps.im <- with(activity.im, tapply(steps, date, sum, na.rm = TRUE))
 qplot(sumsteps.im) + labs(x = "Number of Steps", y = "Frequency (Days)", title = "Histogram of Total Number of Steps per Day")
+```
+
+![](PA1_template_files/figure-html/imputena-1.png)<!-- -->
+
+```r
 meanst.im <- mean(sumsteps.im, na.rm = TRUE)
 medianst.im <- median(sumsteps.im, na.rm = TRUE)
-
 ```
-Previously in the activity data, the number of rows in with NAs is `r nanum`.  
+Previously in the activity data, the number of rows in with NAs is 2304.  
 
-After imputing data, the mean of total steps per day is `r meanst.im`. The median is `r medianst.im`. The median and mean is now the same.  
+After imputing data, the mean of total steps per day is 10766.19. The median is 10766.19. The median and mean is now the same.  
 
 ## Are there differences in activity patterns between weekdays and weekends?
 Lastly, the data is split into weekday and weekend. The time series are then plotted. The weekday plot is similar to the overall plot in the previous section. However, the weekend plot has different shape as numer of steps is higher from around interval 1000 through 2000. This can be due to during weekday, the test subject maybe less active.
 
-```{r weekdayweekend, fig.height=10}
+
+```r
 weekend <- c("Saturday", "Sunday")
 
 for (i in 1:nrow(activity.im)) {
@@ -89,6 +97,7 @@ pattern.wkend <- data.frame(interval = names(meansteps.wkend), steps = meansteps
 par(mfrow = c(2,1))
 with(pattern.wkday, plot(interval, steps, type = "l", ylab = "Number of Steps", main = "Weekday Time Series"))
 with(pattern.wkend, plot(interval, steps, type = "l", ylab = "Number of Steps", main = "Weekend Time Series"))
-
 ```
+
+![](PA1_template_files/figure-html/weekdayweekend-1.png)<!-- -->
 
