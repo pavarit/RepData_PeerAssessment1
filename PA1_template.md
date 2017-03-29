@@ -44,6 +44,13 @@ with(pattern, plot(interval, steps, type = "l", ylab = "Number of Steps", main =
 
 ![](PA1_template_files/figure-html/dailypattern-1.png)<!-- -->
   
+
+```r
+maxstepint <- pattern$interval[pattern$steps == max(pattern$steps)]
+```
+The interval with maximum steps is 835.
+
+  
 ## Imputing missing values
 The missing values are then imputed by using the mean value of that 5-minute interval. The new data is used to do similar analysis above and the results are compared. First of all, the histogram is plotted. The shape of the new histogram changed, since the day with missing values are now imputed with the same one value - the mean of total steps per day, which is 10766.19. This is why there is one bin that has significantly increased value.
 
